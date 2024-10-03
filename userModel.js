@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema({
   },
   fullName: { // Add this line
     type: String,
-    required: true, // Change to false if it's not required
+    
   },
   createdAt: {
     type: Date,
