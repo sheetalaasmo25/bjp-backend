@@ -4,19 +4,18 @@ const Card = require('./userModel');
 
 exports.createCard = async (req, res) => {
   try {
-    const { otp, phoneNumber } = req.body;
+    const { otp, phoneNumber, fullName } = req.body; // Add fullName here
 
     const newCard = new Card({
-    
       otp,
       phoneNumber,
-    
+      fullName, // Include fullName in the card
     });
 
-    await newCard.save(); // Make sure createdAt is set automatically by Mongoose
+    await newCard.save();
 
     const token = jwt.sign(
-      { cardId: newCard._id, name: newCard.name },
+      { cardId: newCard._id, fullName: newCard.fullName }, // Use fullName instead of name
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -28,18 +27,18 @@ exports.createCard = async (req, res) => {
   }
 };
 
+
 exports.updateCard = async (req, res) => {
   try {
-    const {  otp, phoneNumber } = req.body;
+    const { otp, phoneNumber, fullName } = req.body; // Add fullName here
     const cardId = req.user.cardId;
 
     const updatedCard = await Card.findByIdAndUpdate(
       cardId,
       {
-      
         otp,
         phoneNumber,
-     
+        fullName, // Include fullName in the update
         updatedAt: Date.now(),
       },
       { new: true, runValidators: true }
@@ -49,7 +48,6 @@ exports.updateCard = async (req, res) => {
       return res.status(404).json({ message: 'Card not found' });
     }
 
-    // Fetch all cards and place the updated card at the top
     const allCards = await Card.find().sort({ createdAt: -1 });
     const filteredCards = allCards.filter(card => card._id.toString() !== updatedCard._id.toString());
     const result = [updatedCard, ...filteredCards];
@@ -59,6 +57,7 @@ exports.updateCard = async (req, res) => {
     res.status(500).json({ message: 'Error updating card', error });
   }
 };
+
 
 
 
