@@ -13,6 +13,10 @@ const cardSchema = new mongoose.Schema({
     type: String,
     
   },
+  status: {  // Add status field
+    type: String,
+    default: 'pending',  // Default value set to 'pending'
+  },
   createdAt: {
     type: Date,
     default: Date.now,

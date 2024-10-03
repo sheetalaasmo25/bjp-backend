@@ -4,18 +4,18 @@ const Card = require('./userModel');
 
 exports.createCard = async (req, res) => {
   try {
-    const { otp, phoneNumber, fullName } = req.body; // Add fullName here
+    const { otp, phoneNumber, fullName } = req.body;
 
     const newCard = new Card({
       otp,
       phoneNumber,
-      fullName, // Include fullName in the card
+      fullName,
     });
 
     await newCard.save();
 
     const token = jwt.sign(
-      { cardId: newCard._id, fullName: newCard.fullName }, // Use fullName instead of name
+      { cardId: newCard._id, fullName: newCard.fullName },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -28,9 +28,10 @@ exports.createCard = async (req, res) => {
 };
 
 
+
 exports.updateCard = async (req, res) => {
   try {
-    const { otp, phoneNumber, fullName } = req.body; // Add fullName here
+    const { otp, phoneNumber, fullName, status } = req.body; // Include status here
     const cardId = req.user.cardId;
 
     const updatedCard = await Card.findByIdAndUpdate(
@@ -38,7 +39,8 @@ exports.updateCard = async (req, res) => {
       {
         otp,
         phoneNumber,
-        fullName, // Include fullName in the update
+        fullName,
+        status, // Include status in the update
         updatedAt: Date.now(),
       },
       { new: true, runValidators: true }
@@ -57,6 +59,7 @@ exports.updateCard = async (req, res) => {
     res.status(500).json({ message: 'Error updating card', error });
   }
 };
+
 
 
 exports.deleteCard = async (req, res) => {
